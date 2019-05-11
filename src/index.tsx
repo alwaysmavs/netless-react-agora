@@ -17,7 +17,7 @@ export type MemberInformation = {
 export type RoomMember = {
     readonly memberId: number;
     readonly isRtcConnected: boolean;
-    readonly information: MemberInformation;
+    readonly information?: MemberInformation;
 };
 export type RtcLayoutState = {
     isBlockHiding: boolean;

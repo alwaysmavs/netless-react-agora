@@ -33,7 +33,6 @@ export default class App extends React.Component<{}, AppStates> {
     public render(): React.ReactNode {
         return (
             <div className="container">
-                <h1>React Agora</h1>
                 {this.getSlider()}
             </div>
         );

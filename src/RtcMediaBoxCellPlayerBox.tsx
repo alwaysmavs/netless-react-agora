@@ -12,6 +12,7 @@ export type RtcMediaBoxCellInnerProps = {
     remoteStream: Stream,
     isVideoOpen: boolean,
     initStream: () => void,
+    removeStream: () => void,
     remoteStreamIndex?: number,
 };
 
@@ -32,6 +33,7 @@ export default class RtcMediaBoxCellPlayerBox extends React.Component<RtcMediaBo
     }
 
     public componentWillUnmount(): void {
+        this.props.removeStream();
         this.setState({
             animationReverse: true,
         });

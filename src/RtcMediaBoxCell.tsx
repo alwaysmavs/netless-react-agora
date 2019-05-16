@@ -82,6 +82,10 @@ export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, 
         this.setState({isVideoOpen: true, isAudioOpen: true});
     }
 
+    private removeStream = (): void  => {
+        this.setState({isVideoOpen: false, isAudioOpen: false});
+    }
+
     public render(): React.ReactNode {
         const { remoteStream, roomMember }  = this.props;
         return (
@@ -114,6 +118,7 @@ export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, 
                 <RtcMediaBoxCellPlayerBox
                     remoteStreamIndex={this.props.remoteIndex}
                     initStream={this.initStream}
+                    removeStream={this.removeStream}
                     remoteStream={remoteStream}
                     isVideoOpen={this.state.isVideoOpen}
                     streamBoxId={this.props.streamBoxId}/>}

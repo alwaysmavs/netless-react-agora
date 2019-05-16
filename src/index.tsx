@@ -58,12 +58,14 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
     private startRtc = (uid: number, channelId: string): void => {
         this.setSliderExtending();
         this.setState({isStartBtnLoading: true});
-        this.agoraClient = AgoraRTC.createClient({mode: "live", codec: "h264"});
-        this.agoraClient.init(this.props.agoraAppId, () => {
-            console.log("AgoraRTC client initialized");
-        }, err => {
-            console.log("AgoraRTC client init failed", err);
-        });
+        if (!this.agoraClient) {
+            this.agoraClient = AgoraRTC.createClient({mode: "live", codec: "h264"});
+            this.agoraClient.init(this.props.agoraAppId, () => {
+                console.log("AgoraRTC client initialized");
+            }, err => {
+                console.log("AgoraRTC client init failed", err);
+            });
+        }
         const localStream = AgoraRTC.createStream({
             streamID: uid,
             audio: true,
@@ -93,36 +95,35 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
         this.agoraClient.on("stream-added",  evt => {
             const stream = evt.stream;
             console.log("New stream added: " + stream.getId());
+            const remoteMediaStreams: Stream[] = this.state.remoteMediaStreams;
+            remoteMediaStreams.push(stream);
+            this.setState({remoteMediaStreams: remoteMediaStreams});
             this.agoraClient.subscribe(stream, err => {
                 console.log("Subscribe stream failed", err);
             });
         });
+        this.agoraClient.on("peer-leave", evt => {
+            this.stop(evt.uid);
+            console.log("remote user left ", uid);
+        });
         this.agoraClient.on("stream-subscribed", (evt: any) => {
             const remoteStream: Stream = evt.stream;
-            const remoteMediaStreams: Stream[] = this.state.remoteMediaStreams;
-            remoteMediaStreams.push(remoteStream);
-            this.setState({remoteMediaStreams: remoteMediaStreams});
             console.log("Subscribe remote stream successfully: " + remoteStream.getId());
-        });
-        this.agoraClient.on("mute-video", evt => {
-            const uid = evt.uid;
-            console.log("mute video" + uid);
-        });
-        this.agoraClient.on("unmute-video", evt => {
-            const uid = evt.uid;
-            console.log("unmute video" + uid);
-        });
-        this.agoraClient.on("mute-audio", evt => {
-            const uid = evt.uid;
-            console.log("mute-audio" + uid);
-        });
-        this.agoraClient.on("unmute-audio", evt => {
-            const uid = evt.uid;
-            console.log("unmute-audio" + uid);
         });
     }
 
-    private stopRtc = (): void => {
+    private stop = (streamId: number): void => {
+        const remoteMediaStreams = this.state.remoteMediaStreams;
+        const stream = remoteMediaStreams.find((stream: Stream) => {
+            return stream.getId() === streamId;
+        });
+        if (stream) {
+            remoteMediaStreams.splice(remoteMediaStreams.indexOf(stream), 1);
+            this.setState({remoteMediaStreams: remoteMediaStreams});
+        }
+    }
+
+    private stopLocal = (): void => {
         this.agoraClient.leave(() => {
             this.state.localStream!.stop();
             this.state.localStream!.close();
@@ -132,6 +133,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             console.log("Leave channel failed" + err);
         });
     }
+
     public componentDidMount(): void {
         if (this.props.defaultStart) {
             this.startRtc(this.props.userId, this.props.channelId);
@@ -227,7 +229,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
                     setSliderExtending: this.setSliderExtending,
                     setSliderFloating: this.setSliderFloating,
                     setSliderHiding: this.setSliderHiding,
-                    stopRtc: this.stopRtc,
+                    stopRtc: this.stopLocal,
                     agoraClient: this.agoraClient,
             }}>
                 <SlidingBlockMask state={this.state.blockState}

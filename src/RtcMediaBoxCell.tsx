@@ -7,7 +7,7 @@ import mute_gray from "./images/mute_gray.svg";
 import voice from "./images/voice.svg";
 import RtcMediaBoxCellPlayerBox from "./RtcMediaBoxCellPlayerBox";
 import {RoomMember} from "./index";
-import {Stream} from "agora-rtc-sdk";
+import {Stream, Client} from "agora-rtc-sdk";
 import rtcMediaBoxCell from "./RtcMediaBoxCell.less";
 
 export type rtcVideoCellProps = {
@@ -15,20 +15,58 @@ export type rtcVideoCellProps = {
     roomMember: RoomMember,
     remoteStream?: Stream;
     remoteIndex?: number;
+    agoraClient: Client;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
+export type RtcMediaBoxCellStates = {
+    isVideoOpen: boolean;
+    isAudioOpen: boolean;
+};
 
-export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, {}> {
+export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, RtcMediaBoxCellStates> {
 
     public constructor(props: rtcVideoCellProps) {
         super(props);
+        this.state = {
+            isVideoOpen: false,
+            isAudioOpen: false,
+        };
+    }
+
+    public componentWillReceiveProps(): void {
+        const {agoraClient, remoteStream} = this.props;
+        if (remoteStream) {
+            agoraClient.on("mute-video", evt => {
+                const uid = evt.uid;
+                if (remoteStream.getId() === uid) {
+                    this.setState({isVideoOpen: false});
+                }
+            });
+            agoraClient.on("unmute-video", evt => {
+                const uid = evt.uid;
+                if (remoteStream.getId() === uid) {
+                    this.setState({isVideoOpen: true});
+                }
+            });
+            agoraClient.on("mute-audio", evt => {
+                const uid = evt.uid;
+                if (remoteStream.getId() === uid) {
+                    this.setState({isAudioOpen: false});
+                }
+            });
+            agoraClient.on("unmute-audio", evt => {
+                const uid = evt.uid;
+                if (remoteStream.getId() === uid) {
+                    this.setState({isAudioOpen: true});
+                }
+            });
+        }
     }
     private renderRemoteVoiceIcon(): React.ReactNode {
-        const { remoteStream }  = this.props;
-        if (remoteStream && remoteStream.hasAudio()) {
+        if (this.state.isAudioOpen) {
             return (
                 <div className={rtcMediaBoxCell["rtc-float-sound"]}>
-                    <img className="rtc-float-sound-img" src={voice}/>
+                    <img className={rtcMediaBoxCell["rtc-float-sound-img"]} src={voice}/>
                 </div>
             );
         } else {
@@ -40,6 +78,10 @@ export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, 
         }
     }
 
+    private initStream = (): void  => {
+        this.setState({isVideoOpen: true, isAudioOpen: true});
+    }
+
     public render(): React.ReactNode {
         const { remoteStream, roomMember }  = this.props;
         return (
@@ -47,7 +89,7 @@ export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, 
                 <div
                     style={{
                         zIndex: 2,
-                        display: (remoteStream && remoteStream.hasVideo()) ?  "none" : "flex",
+                        display: this.state.isVideoOpen ?  "none" : "flex",
                         borderTopRightRadius: 4,
                     }}
                     className={rtcMediaBoxCell["rtc-float-cell"]}>
@@ -71,7 +113,9 @@ export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, 
                 {remoteStream &&
                 <RtcMediaBoxCellPlayerBox
                     remoteStreamIndex={this.props.remoteIndex}
+                    initStream={this.initStream}
                     remoteStream={remoteStream}
+                    isVideoOpen={this.state.isVideoOpen}
                     streamBoxId={this.props.streamBoxId}/>}
                 {this.renderRemoteVoiceIcon()}
             </div>

@@ -7,7 +7,7 @@ import {HtmlElementRefContainer} from "./HtmlElementRefContainer";
 import RtcStopWatch from "./RtcStopWatch";
 import RtcMediaBoxCell from "./RtcMediaBoxCell";
 import {RoomMember} from "./index";
-import {Stream} from "agora-rtc-sdk";
+import {Stream, Client} from "agora-rtc-sdk";
 import floatBoxExtend from "./FloatBoxExtend.less";
 
 export type FloatBoxExtendProps = {
@@ -19,6 +19,7 @@ export type FloatBoxExtendProps = {
     stopRtc: () => void;
     ignoreEventRefs: HtmlElementRefContainer;
     height: number;
+    agoraClient: Client;
 };
 
 export type FloatBoxExtendStates = {
@@ -81,6 +82,7 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
                 );
                 remoteStreamsComponentCells.push((
                     <RtcMediaBoxCell
+                        agoraClient={this.props.agoraClient}
                         roomMember={remoteUser}
                         remoteIndex={remoteUserArray.length}
                         key={`${remoteUserId}`}
@@ -109,7 +111,7 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
                 </div>
                 <div
                     style={{
-                        height: height - 256,
+                        height: height - 64,
                         overflow: "auto",
                     }}
                     className={floatBoxExtend["rtc-float-cell-box"]}>

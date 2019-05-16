@@ -69,7 +69,10 @@ export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockSta
                 }}>
                 {this.props.state === SlidingBlockState.Hiding && this.renderHiding()}
                 {this.props.state === SlidingBlockState.Floating && this.renderFloating()}
-                {this.props.state === SlidingBlockState.Extending && <div className={rtcBlock["rtc-extending-wrapper"]} style={style}>
+                {this.props.state === SlidingBlockState.Extending &&
+                <div
+                    className={rtcBlock["rtc-extending-wrapper"]}
+                    style={style}>
                     <FloatBoxExtend
                         remoteMediaStreams={context.remoteMediaStreams}
                         userId={context.userId}
@@ -78,6 +81,7 @@ export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockSta
                         setSliderFloating={context.setSliderFloating}
                         stopRtc={context.stopRtc}
                         height={this.props.height}
+                        agoraClient={context.agoraClient}
                         ignoreEventRefs={this.props.ignoreEventRefs}/>
                 </div>}
             </div>

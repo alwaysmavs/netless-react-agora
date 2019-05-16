@@ -104,6 +104,22 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             this.setState({remoteMediaStreams: remoteMediaStreams});
             console.log("Subscribe remote stream successfully: " + remoteStream.getId());
         });
+        this.agoraClient.on("mute-video", evt => {
+            const uid = evt.uid;
+            console.log("mute video" + uid);
+        });
+        this.agoraClient.on("unmute-video", evt => {
+            const uid = evt.uid;
+            console.log("unmute video" + uid);
+        });
+        this.agoraClient.on("mute-audio", evt => {
+            const uid = evt.uid;
+            console.log("mute-audio" + uid);
+        });
+        this.agoraClient.on("unmute-audio", evt => {
+            const uid = evt.uid;
+            console.log("unmute-audio" + uid);
+        });
     }
 
     private stopRtc = (): void => {
@@ -202,15 +218,17 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             return this.renderRtcBtn();
         }
         return (
-            <RtcBlockContextProvider value={{
-                remoteMediaStreams: this.state.remoteMediaStreams,
-                userId: this.props.userId,
-                roomMembers: this.props.roomMembers,
-                localStream: this.state.localStream,
-                setSliderExtending: this.setSliderExtending,
-                setSliderFloating: this.setSliderFloating,
-                setSliderHiding: this.setSliderHiding,
-                stopRtc: this.stopRtc,
+            <RtcBlockContextProvider
+                value={{
+                    remoteMediaStreams: this.state.remoteMediaStreams,
+                    userId: this.props.userId,
+                    roomMembers: this.props.roomMembers,
+                    localStream: this.state.localStream,
+                    setSliderExtending: this.setSliderExtending,
+                    setSliderFloating: this.setSliderFloating,
+                    setSliderHiding: this.setSliderHiding,
+                    stopRtc: this.stopRtc,
+                    agoraClient: this.agoraClient,
             }}>
                 <SlidingBlockMask state={this.state.blockState}
                                   hiding={this.HidingPosition}

@@ -1,6 +1,6 @@
 import * as React from "react";
 import {RoomMember} from "./index";
-import {Stream} from "agora-rtc-sdk";
+import {Client, Stream} from "agora-rtc-sdk";
 export type RtcBlockContext = {
     readonly remoteMediaStreams: Stream[];
     readonly userId: number;
@@ -10,6 +10,7 @@ export type RtcBlockContext = {
     setSliderExtending: () => void;
     setSliderHiding: () => void;
     stopRtc: () => void;
+    agoraClient: Client;
 };
 
 const context = React.createContext<RtcBlockContext>(undefined as any);

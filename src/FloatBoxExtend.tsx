@@ -83,12 +83,12 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
             ignoreEventRefs,
             height,
             stopRtc} = this.props;
-        const remoteUserArray = roomMembers.filter(data => (data.information && data.information.id) !== userId);
-        const localUser = roomMembers.find(data => (data.information && data.information.id) === userId);
+        const remoteUserArray = roomMembers.filter(data => (data.information && parseInt(`${data.information.id}`)) !== userId);
+        const localUser = roomMembers.find(data => (data.information && parseInt(`${data.information.id}`)) === userId);
         const remoteStreamsComponentCells: React.ReactNode[] = [];
         for (const remoteUser of remoteUserArray) {
             if (remoteUser.information) {
-                const remoteUserId = remoteUser.information.id;
+                const remoteUserId = parseInt(`${remoteUser.information.id}`);
                 const remoteRtcStream = this.state.remoteMediaStreams.find(
                     remoteMediaStream => remoteMediaStream.getId() === remoteUserId,
                 );

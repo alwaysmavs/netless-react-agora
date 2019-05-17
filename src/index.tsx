@@ -44,6 +44,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
     private HidingPosition: BlockPosition = HidingPosition;
     private ExtendingPosition: BlockPosition = ExtendingPosition;
     private agoraClient: Client;
+    // private remoteMediaStreams: Stream[]
     public constructor(props: RtcLayoutProps) {
         super(props);
         this.state = {
@@ -97,7 +98,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             console.log("New stream added: " + stream.getId());
             const remoteMediaStreams: Stream[] = this.state.remoteMediaStreams;
             remoteMediaStreams.push(stream);
-            this.setState({remoteMediaStreams: remoteMediaStreams});
+            // this.setState({remoteMediaStreams: remoteMediaStreams});
             this.agoraClient.subscribe(stream, err => {
                 console.log("Subscribe stream failed", err);
             });
@@ -129,7 +130,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
         this.agoraClient.leave(() => {
             this.state.localStream!.stop();
             this.state.localStream!.close();
-            this.setState({localStream: null});
+            this.setState({localStream: null, remoteMediaStreams: []});
             this.setSliderHiding();
         }, err => {
             console.log("Leave channel failed" + err);

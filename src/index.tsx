@@ -19,12 +19,15 @@ export type RoomMember = {
     readonly isRtcConnected: boolean;
     readonly information?: MemberInformation;
 };
+export type StreamsStatesType = {state: {isVideoOpen: boolean, isAudioOpen: boolean}, uid: number};
 export type RtcLayoutState = {
     isBlockHiding: boolean;
     blockState: SlidingBlockState;
     remoteMediaStreams: Stream[];
+    remoteMediaStreamsStates: StreamsStatesType[];
     localStream: Stream | null;
     isStartBtnLoading: boolean;
+    joinRoomTime: number;
 };
 
 export type RtcLayoutProps = {
@@ -44,7 +47,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
     private HidingPosition: BlockPosition = HidingPosition;
     private ExtendingPosition: BlockPosition = ExtendingPosition;
     private agoraClient: Client;
-    // private remoteMediaStreams: Stream[]
+    private rtcClock: any;
     public constructor(props: RtcLayoutProps) {
         super(props);
         this.state = {
@@ -53,6 +56,8 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             remoteMediaStreams: [],
             isStartBtnLoading: false,
             localStream: null,
+            remoteMediaStreamsStates: [],
+            joinRoomTime: 0,
         };
     }
 
@@ -77,6 +82,8 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             console.log("getUserMedia successfully");
             this.setState({localStream: localStream});
             localStream.play("rtc_local_stream");
+            this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
+
             this.setState({isStartBtnLoading: false});
             this.agoraClient.join(this.props.agoraAppId, channelId, uid, (uid: number) => {
                 console.log("User " + uid + " join channel successfully");
@@ -96,9 +103,14 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
         this.agoraClient.on("stream-added",  evt => {
             const stream = evt.stream;
             console.log("New stream added: " + stream.getId());
-            const remoteMediaStreams: Stream[] = this.state.remoteMediaStreams;
+            const remoteMediaStreams = this.state.remoteMediaStreams;
             remoteMediaStreams.push(stream);
-            this.setState({remoteMediaStreams: remoteMediaStreams});
+            const remoteMediaStreamsStates = this.state.remoteMediaStreamsStates;
+            remoteMediaStreamsStates.push({uid: stream.getId(), state: {isAudioOpen: true, isVideoOpen: true}});
+            this.setState({
+                remoteMediaStreams: remoteMediaStreams,
+                remoteMediaStreamsStates: remoteMediaStreamsStates,
+            });
             this.agoraClient.subscribe(stream, err => {
                 console.log("Subscribe stream failed", err);
             });
@@ -111,6 +123,46 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             const remoteStream: Stream = evt.stream;
             console.log("Subscribe remote stream successfully: " + remoteStream.getId());
         });
+        this.agoraClient.on("mute-video", evt => {
+            const uid = evt.uid;
+            const remoteMediaStreamsStates = this.state.remoteMediaStreamsStates.map(data => {
+                if (data.uid === uid) {
+                    data.state.isVideoOpen = false;
+                }
+                return data;
+            });
+            this.setState({remoteMediaStreamsStates: remoteMediaStreamsStates});
+        });
+        this.agoraClient.on("unmute-video", evt => {
+            const uid = evt.uid;
+            const remoteMediaStreamsStates = this.state.remoteMediaStreamsStates.map(data => {
+                if (data.uid === uid) {
+                    data.state.isVideoOpen = true;
+                }
+                return data;
+            });
+            this.setState({remoteMediaStreamsStates: remoteMediaStreamsStates});
+        });
+        this.agoraClient.on("mute-audio", evt => {
+            const uid = evt.uid;
+            const remoteMediaStreamsStates = this.state.remoteMediaStreamsStates.map(data => {
+                if (data.uid === uid) {
+                    data.state.isAudioOpen = false;
+                }
+                return data;
+            });
+            this.setState({remoteMediaStreamsStates: remoteMediaStreamsStates});
+        });
+        this.agoraClient.on("unmute-audio", evt => {
+            const uid = evt.uid;
+            const remoteMediaStreamsStates = this.state.remoteMediaStreamsStates.map(data => {
+                if (data.uid === uid) {
+                    data.state.isAudioOpen = true;
+                }
+                return data;
+            });
+            this.setState({remoteMediaStreamsStates: remoteMediaStreamsStates});
+        });
     }
 
     private stop = (streamId: number): void => {
@@ -119,19 +171,32 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             return stream.getId() === streamId;
         });
         if (stream) {
-            stream.stop();
-            stream.close();
+            const remoteMediaStreamsStates = this.state.remoteMediaStreamsStates.map(data => {
+                if (data.uid === stream.getId()) {
+                    data.state.isVideoOpen = false;
+                    data.state.isAudioOpen = false;
+                }
+                return data;
+            });
             remoteMediaStreams.splice(remoteMediaStreams.indexOf(stream), 1);
-            this.setState({remoteMediaStreams: remoteMediaStreams});
+            this.setState({
+                remoteMediaStreams: remoteMediaStreams,
+                remoteMediaStreamsStates: remoteMediaStreamsStates,
+            });
         }
     }
 
     private stopLocal = (): void => {
         this.agoraClient.leave(() => {
-            this.state.localStream!.stop();
-            this.state.localStream!.close();
-            this.setState({localStream: null, remoteMediaStreams: []});
-            this.setSliderHiding();
+            if (this.state.localStream) {
+                this.state.localStream.stop();
+                this.state.localStream.close();
+                this.setState({localStream: null, remoteMediaStreams: []});
+                this.setSliderHiding();
+            }
+            if (this.rtcClock) {
+                clearInterval(this.rtcClock);
+            }
         }, err => {
             console.log("Leave channel failed" + err);
         });
@@ -233,7 +298,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
                     setSliderFloating: this.setSliderFloating,
                     setSliderHiding: this.setSliderHiding,
                     stopRtc: this.stopLocal,
-                    agoraClient: this.agoraClient,
+                    remoteMediaStreamsStates: this.state.remoteMediaStreamsStates,
             }}>
                 <SlidingBlockMask state={this.state.blockState}
                                   hiding={this.HidingPosition}

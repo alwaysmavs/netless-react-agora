@@ -10,6 +10,9 @@ export type RtcMediaBoxCellInnerState = {
 export type RtcMediaBoxCellInnerProps = {
     streamBoxId: string,
     remoteStream: Stream,
+    isVideoOpen: boolean,
+    initStream: () => void,
+    removeStream: () => void,
     remoteStreamIndex?: number,
 };
 
@@ -25,10 +28,12 @@ export default class RtcMediaBoxCellPlayerBox extends React.Component<RtcMediaBo
     public componentDidMount(): void {
         if (this.props.remoteStream) {
             this.props.remoteStream.play(this.props.streamBoxId);
+            this.props.initStream();
         }
     }
 
     public componentWillUnmount(): void {
+        this.props.removeStream();
         this.setState({
             animationReverse: true,
         });
@@ -36,14 +41,13 @@ export default class RtcMediaBoxCellPlayerBox extends React.Component<RtcMediaBo
 
 
     public render(): React.ReactNode {
-        const { remoteStream } = this.props;
         return (
             <TweenOne
                 animation={{scale: 1, duration: 200}}
                 reverse={this.state.animationReverse}
                 style={{
                     transform: "scale(0)",
-                    display: remoteStream.hasVideo() ? "flex" : "none",
+                    display: this.props.isVideoOpen ? "flex" : "none",
                 }}
                 className={rtcMediaBoxCellPlayer["rtc-video-box-cell"]}
                 id={this.props.streamBoxId}

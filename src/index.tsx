@@ -44,6 +44,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
     private HidingPosition: BlockPosition = HidingPosition;
     private ExtendingPosition: BlockPosition = ExtendingPosition;
     private agoraClient: Client;
+    // private remoteMediaStreams: Stream[]
     public constructor(props: RtcLayoutProps) {
         super(props);
         this.state = {
@@ -58,12 +59,14 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
     private startRtc = (uid: number, channelId: string): void => {
         this.setSliderExtending();
         this.setState({isStartBtnLoading: true});
-        this.agoraClient = AgoraRTC.createClient({mode: "live", codec: "h264"});
-        this.agoraClient.init(this.props.agoraAppId, () => {
-            console.log("AgoraRTC client initialized");
-        }, err => {
-            console.log("AgoraRTC client init failed", err);
-        });
+        if (!this.agoraClient) {
+            this.agoraClient = AgoraRTC.createClient({mode: "live", codec: "h264"});
+            this.agoraClient.init(this.props.agoraAppId, () => {
+                console.log("AgoraRTC client initialized");
+            }, err => {
+                console.log("AgoraRTC client init failed", err);
+            });
+        }
         const localStream = AgoraRTC.createStream({
             streamID: uid,
             audio: true,
@@ -93,29 +96,47 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
         this.agoraClient.on("stream-added",  evt => {
             const stream = evt.stream;
             console.log("New stream added: " + stream.getId());
+            const remoteMediaStreams: Stream[] = this.state.remoteMediaStreams;
+            remoteMediaStreams.push(stream);
+            this.setState({remoteMediaStreams: remoteMediaStreams});
             this.agoraClient.subscribe(stream, err => {
                 console.log("Subscribe stream failed", err);
             });
         });
+        this.agoraClient.on("peer-leave", evt => {
+            this.stop(evt.uid);
+            console.log("remote user left ", uid);
+        });
         this.agoraClient.on("stream-subscribed", (evt: any) => {
             const remoteStream: Stream = evt.stream;
-            const remoteMediaStreams: Stream[] = this.state.remoteMediaStreams;
-            remoteMediaStreams.push(remoteStream);
-            this.setState({remoteMediaStreams: remoteMediaStreams});
             console.log("Subscribe remote stream successfully: " + remoteStream.getId());
         });
     }
 
-    private stopRtc = (): void => {
+    private stop = (streamId: number): void => {
+        const remoteMediaStreams = this.state.remoteMediaStreams;
+        const stream = remoteMediaStreams.find((stream: Stream) => {
+            return stream.getId() === streamId;
+        });
+        if (stream) {
+            stream.stop();
+            stream.close();
+            remoteMediaStreams.splice(remoteMediaStreams.indexOf(stream), 1);
+            this.setState({remoteMediaStreams: remoteMediaStreams});
+        }
+    }
+
+    private stopLocal = (): void => {
         this.agoraClient.leave(() => {
             this.state.localStream!.stop();
             this.state.localStream!.close();
-            this.setState({localStream: null});
+            this.setState({localStream: null, remoteMediaStreams: []});
             this.setSliderHiding();
         }, err => {
             console.log("Leave channel failed" + err);
         });
     }
+
     public componentDidMount(): void {
         if (this.props.defaultStart) {
             this.startRtc(this.props.userId, this.props.channelId);
@@ -202,15 +223,17 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             return this.renderRtcBtn();
         }
         return (
-            <RtcBlockContextProvider value={{
-                remoteMediaStreams: this.state.remoteMediaStreams,
-                userId: this.props.userId,
-                roomMembers: this.props.roomMembers,
-                localStream: this.state.localStream,
-                setSliderExtending: this.setSliderExtending,
-                setSliderFloating: this.setSliderFloating,
-                setSliderHiding: this.setSliderHiding,
-                stopRtc: this.stopRtc,
+            <RtcBlockContextProvider
+                value={{
+                    remoteMediaStreams: this.state.remoteMediaStreams,
+                    userId: this.props.userId,
+                    roomMembers: this.props.roomMembers,
+                    localStream: this.state.localStream,
+                    setSliderExtending: this.setSliderExtending,
+                    setSliderFloating: this.setSliderFloating,
+                    setSliderHiding: this.setSliderHiding,
+                    stopRtc: this.stopLocal,
+                    agoraClient: this.agoraClient,
             }}>
                 <SlidingBlockMask state={this.state.blockState}
                                   hiding={this.HidingPosition}

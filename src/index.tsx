@@ -118,6 +118,8 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             return stream.getId() === streamId;
         });
         if (stream) {
+            stream.stop();
+            stream.close();
             remoteMediaStreams.splice(remoteMediaStreams.indexOf(stream), 1);
             this.setState({remoteMediaStreams: remoteMediaStreams});
         }

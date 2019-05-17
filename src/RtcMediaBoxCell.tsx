@@ -35,35 +35,33 @@ export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, 
         };
     }
 
-    public componentWillReceiveProps(nextProps: rtcVideoCellProps): void {
+    public componentWillReceiveProps(): void {
         const {agoraClient, remoteStream} = this.props;
-        if (nextProps.remoteStream !== remoteStream) {
-            if (remoteStream) {
-                agoraClient.on("mute-video", evt => {
-                    const uid = evt.uid;
-                    if (remoteStream.getId() === uid) {
-                        this.setState({isVideoOpen: false});
-                    }
-                });
-                agoraClient.on("unmute-video", evt => {
-                    const uid = evt.uid;
-                    if (remoteStream.getId() === uid) {
-                        this.setState({isVideoOpen: true});
-                    }
-                });
-                agoraClient.on("mute-audio", evt => {
-                    const uid = evt.uid;
-                    if (remoteStream.getId() === uid) {
-                        this.setState({isAudioOpen: false});
-                    }
-                });
-                agoraClient.on("unmute-audio", evt => {
-                    const uid = evt.uid;
-                    if (remoteStream.getId() === uid) {
-                        this.setState({isAudioOpen: true});
-                    }
-                });
-            }
+        if (remoteStream) {
+            agoraClient.on("mute-video", evt => {
+                const uid = evt.uid;
+                if (remoteStream.getId() === uid) {
+                    this.setState({isVideoOpen: false});
+                }
+            });
+            agoraClient.on("unmute-video", evt => {
+                const uid = evt.uid;
+                if (remoteStream.getId() === uid) {
+                    this.setState({isVideoOpen: true});
+                }
+            });
+            agoraClient.on("mute-audio", evt => {
+                const uid = evt.uid;
+                if (remoteStream.getId() === uid) {
+                    this.setState({isAudioOpen: false});
+                }
+            });
+            agoraClient.on("unmute-audio", evt => {
+                const uid = evt.uid;
+                if (remoteStream.getId() === uid) {
+                    this.setState({isAudioOpen: true});
+                }
+            });
         }
     }
     private renderRemoteVoiceIcon(): React.ReactNode {

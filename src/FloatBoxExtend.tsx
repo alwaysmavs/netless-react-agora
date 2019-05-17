@@ -29,6 +29,7 @@ export type FloatBoxExtendStates = {
     isAudioOpen: boolean,
     isVideoOpen: boolean,
     animationReverse: boolean;
+    remoteMediaStreams: Stream[];
 };
 
 export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps, FloatBoxExtendStates> {
@@ -38,6 +39,7 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
             isAudioOpen: false,
             isVideoOpen: false,
             animationReverse: false,
+            remoteMediaStreams: this.props.remoteMediaStreams,
         };
     }
 
@@ -45,6 +47,24 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
         const isAudioOpen = this.props.localStream.hasAudio();
         const isVideoOpen = this.props.localStream.hasVideo();
         this.setState({isAudioOpen: isAudioOpen, isVideoOpen: isVideoOpen});
+    }
+
+    public componentWillReceiveProps(nextProps: FloatBoxExtendProps): void {
+        if (this.props.blockState !== nextProps.blockState) {
+            if (nextProps.blockState === SlidingBlockState.Floating) {
+                const remoteMediaStreams = this.state.remoteMediaStreams;
+                for (const stream of remoteMediaStreams) {
+                    stream.disableVideo();
+                }
+                this.setState({remoteMediaStreams: remoteMediaStreams});
+            } else if (nextProps.blockState === SlidingBlockState.Extending) {
+                const remoteMediaStreams = this.state.remoteMediaStreams;
+                for (const stream of remoteMediaStreams) {
+                    stream.enableVideo();
+                }
+                this.setState({remoteMediaStreams: remoteMediaStreams});
+            }
+        }
     }
 
     private setVideoState = (isVideoOpen: boolean): void => {
@@ -59,7 +79,6 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
             localStream,
             roomMembers,
             userId,
-            remoteMediaStreams,
             setSliderFloating,
             ignoreEventRefs,
             height,
@@ -70,7 +89,7 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
         for (const remoteUser of remoteUserArray) {
             if (remoteUser.information) {
                 const remoteUserId = remoteUser.information.id;
-                const remoteRtcStream = remoteMediaStreams.find(
+                const remoteRtcStream = this.state.remoteMediaStreams.find(
                     remoteMediaStream => remoteMediaStream.getId() === remoteUserId,
                 );
                 remoteStreamsComponentCells.push((

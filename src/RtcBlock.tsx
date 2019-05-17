@@ -77,7 +77,6 @@ export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockSta
                 }}>
                 {this.props.state === SlidingBlockState.Hiding && this.renderHiding()}
                 {this.props.state === SlidingBlockState.Floating && this.renderFloating()}
-                {this.props.state === SlidingBlockState.Extending &&
                 <div
                     className={rtcBlock["rtc-extending-wrapper"]}
                     style={style}>
@@ -93,7 +92,7 @@ export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockSta
                         height={this.props.height}
                         agoraClient={context.agoraClient}
                         ignoreEventRefs={this.props.ignoreEventRefs}/>
-                </div>}
+                </div>
             </div>
         )}/>;
     }

@@ -9,6 +9,7 @@ import RtcMediaBoxCell from "./RtcMediaBoxCell";
 import {RoomMember} from "./index";
 import {Stream, Client} from "agora-rtc-sdk";
 import floatBoxExtend from "./FloatBoxExtend.less";
+import {SlidingBlockState} from "./slidingBlock";
 
 export type FloatBoxExtendProps = {
     readonly remoteMediaStreams: Stream[];
@@ -20,24 +21,23 @@ export type FloatBoxExtendProps = {
     ignoreEventRefs: HtmlElementRefContainer;
     height: number;
     agoraClient: Client;
+    blockState:  SlidingBlockState;
+    joinRoomTime: number;
 };
 
 export type FloatBoxExtendStates = {
     isAudioOpen: boolean,
     isVideoOpen: boolean,
     animationReverse: boolean;
-    joinRoomTime: number;
 };
 
 export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps, FloatBoxExtendStates> {
-    private rtcClock: any;
     public constructor(props: FloatBoxExtendProps) {
         super(props);
         this.state = {
             isAudioOpen: false,
             isVideoOpen: false,
             animationReverse: false,
-            joinRoomTime: 0,
         };
     }
 
@@ -45,13 +45,6 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
         const isAudioOpen = this.props.localStream.hasAudio();
         const isVideoOpen = this.props.localStream.hasVideo();
         this.setState({isAudioOpen: isAudioOpen, isVideoOpen: isVideoOpen});
-        this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
-    }
-
-    public componentWillUnmount(): void {
-        if (this.rtcClock) {
-            clearInterval(this.rtcClock);
-        }
     }
 
     private setVideoState = (isVideoOpen: boolean): void => {
@@ -82,6 +75,7 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
                 );
                 remoteStreamsComponentCells.push((
                     <RtcMediaBoxCell
+                        blockState={this.props.blockState}
                         agoraClient={this.props.agoraClient}
                         roomMember={remoteUser}
                         remoteIndex={remoteUserArray.length}
@@ -116,6 +110,7 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
                     }}
                     className={floatBoxExtend["rtc-float-cell-box"]}>
                     <RtcMediaBoxCellSelf
+                        blockState={this.props.blockState}
                         roomMember={localUser}
                         isAudioOpen={this.state.isAudioOpen}
                         isVideoOpen={this.state.isVideoOpen}
@@ -133,7 +128,7 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
                     }}
                     className={floatBoxExtend["rtc-float-icon-bar"]}>
                     <div className={floatBoxExtend["rtc-float-icon-bar-left"]}>
-                        <RtcStopWatch joinRoomTime={this.state.joinRoomTime}/>
+                        <RtcStopWatch joinRoomTime={this.props.joinRoomTime}/>
                     </div>
                     <FloatBoxController
                         localStream={localStream}

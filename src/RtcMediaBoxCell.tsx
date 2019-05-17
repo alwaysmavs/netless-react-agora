@@ -9,6 +9,7 @@ import RtcMediaBoxCellPlayerBox from "./RtcMediaBoxCellPlayerBox";
 import {RoomMember} from "./index";
 import {Stream, Client} from "agora-rtc-sdk";
 import rtcMediaBoxCell from "./RtcMediaBoxCell.less";
+import {SlidingBlockState} from "./slidingBlock";
 
 export type rtcVideoCellProps = {
     streamBoxId: string;
@@ -16,6 +17,7 @@ export type rtcVideoCellProps = {
     remoteStream?: Stream;
     remoteIndex?: number;
     agoraClient: Client;
+    blockState:  SlidingBlockState;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 export type RtcMediaBoxCellStates = {

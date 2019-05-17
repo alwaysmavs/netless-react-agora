@@ -76,7 +76,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
         localStream.init(()  => {
             console.log("getUserMedia successfully");
             this.setState({localStream: localStream});
-            localStream.play("rtc_local_stream");
+            // localStream.play("rtc_local_stream");
             this.setState({isStartBtnLoading: false});
             this.agoraClient.join(this.props.agoraAppId, channelId, uid, (uid: number) => {
                 console.log("User " + uid + " join channel successfully");
@@ -98,7 +98,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             console.log("New stream added: " + stream.getId());
             const remoteMediaStreams: Stream[] = this.state.remoteMediaStreams;
             remoteMediaStreams.push(stream);
-            // this.setState({remoteMediaStreams: remoteMediaStreams});
+            this.setState({remoteMediaStreams: remoteMediaStreams});
             this.agoraClient.subscribe(stream, err => {
                 console.log("Subscribe stream failed", err);
             });

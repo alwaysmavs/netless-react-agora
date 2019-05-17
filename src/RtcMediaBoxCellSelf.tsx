@@ -8,13 +8,16 @@ import voice from "./images/voice.svg";
 import {RoomMember} from "./index";
 import {Stream} from "agora-rtc-sdk";
 import rtcMediaBoxCell from "./RtcMediaBoxCell.less";
+import {SlidingBlockState} from "./slidingBlock";
+// const timeout = (ms: any) => new Promise(res => setTimeout(res, ms));
 
 export type rtcVideoCellProps = {
     streamBoxId: string;
-    roomMember: RoomMember | undefined,
-    localStream: Stream,
-    isAudioOpen: boolean,
-    isVideoOpen: boolean,
+    roomMember: RoomMember | undefined;
+    localStream: Stream;
+    isAudioOpen: boolean;
+    isVideoOpen: boolean;
+    blockState:  SlidingBlockState;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 
@@ -22,6 +25,21 @@ export default class RtcMediaBoxCellSelf extends React.Component<rtcVideoCellPro
 
     public constructor(props: rtcVideoCellProps) {
         super(props);
+    }
+
+    public componentDidMount(): void {
+        const { localStream }  = this.props;
+        localStream.play("rtc_local_stream");
+        if (this.props.isVideoOpen) {
+            localStream.enableVideo();
+        }
+    }
+
+    public componentWillUnmount(): void {
+        const { localStream }  = this.props;
+        if (this.props.isVideoOpen) {
+            localStream.disableVideo();
+        }
     }
 
     private renderLocalVoiceIcon(): React.ReactNode {

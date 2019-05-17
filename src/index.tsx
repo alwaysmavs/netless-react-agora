@@ -1,5 +1,6 @@
 import * as React from "react";
 import {BlockPosition, SlidingBlockState} from "./slidingBlock";
+const timeout = (ms: any) => new Promise(res => setTimeout(res, ms));
 import video from "./images/video.svg";
 import {ExtendingPosition, FloatingPosition, HidingPosition} from "./RtcSlidingBlockPosition";
 import {SlidingBlockMask} from "./SlidingBlockMask";
@@ -82,7 +83,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             console.log("getUserMedia successfully");
             this.setState({localStream: localStream});
             localStream.play("rtc_local_stream");
-            this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
+             this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
 
             this.setState({isStartBtnLoading: false});
             this.agoraClient.join(this.props.agoraAppId, channelId, uid, (uid: number) => {
@@ -104,9 +105,18 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             const stream = evt.stream;
             console.log("New stream added: " + stream.getId());
             const remoteMediaStreams = this.state.remoteMediaStreams;
-            remoteMediaStreams.push(stream);
             const remoteMediaStreamsStates = this.state.remoteMediaStreamsStates;
-            remoteMediaStreamsStates.push({uid: stream.getId(), state: {isAudioOpen: true, isVideoOpen: true}});
+            remoteMediaStreams.push(stream);
+            const index = remoteMediaStreamsStates.find(data => data.uid === stream.getId());
+            if (index) {
+                remoteMediaStreamsStates.map(data => {
+                    data.state.isAudioOpen = true;
+                    data.state.isVideoOpen = true;
+                    return data;
+                });
+            } else {
+                remoteMediaStreamsStates.push({uid: stream.getId(), state: {isAudioOpen: true, isVideoOpen: true}});
+            }
             this.setState({
                 remoteMediaStreams: remoteMediaStreams,
                 remoteMediaStreamsStates: remoteMediaStreamsStates,
@@ -187,15 +197,19 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
     }
 
     private stopLocal = (): void => {
-        this.agoraClient.leave(() => {
+        this.agoraClient.leave(async () => {
+            if (this.rtcClock) {
+                clearInterval(this.rtcClock);
+            }
+            await timeout(300);
             if (this.state.localStream) {
                 this.state.localStream.stop();
                 this.state.localStream.close();
-                this.setState({localStream: null, remoteMediaStreams: []});
+                this.setState({localStream: null,
+                    remoteMediaStreams: [],
+                    remoteMediaStreamsStates: [],
+                    joinRoomTime: 0});
                 this.setSliderHiding();
-            }
-            if (this.rtcClock) {
-                clearInterval(this.rtcClock);
             }
         }, err => {
             console.log("Leave channel failed" + err);
@@ -299,6 +313,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
                     setSliderHiding: this.setSliderHiding,
                     stopRtc: this.stopLocal,
                     remoteMediaStreamsStates: this.state.remoteMediaStreamsStates,
+                    joinRoomTime: this.state.joinRoomTime,
             }}>
                 <SlidingBlockMask state={this.state.blockState}
                                   hiding={this.HidingPosition}

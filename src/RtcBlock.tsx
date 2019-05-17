@@ -11,7 +11,6 @@ import rtcBlock from "./RtcBlock.less";
 export type RtcBlockState = {
     isFloatingDragged: boolean;
     animationReverse: boolean;
-    joinRoomTime: number;
 };
 
 export type RtcBlockProps = SlidingBlockProps & {
@@ -25,7 +24,6 @@ export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockSta
         this.state = {
             isFloatingDragged: false,
             animationReverse: false,
-            joinRoomTime: 0,
         };
         this.getBlockRadius = this.getBlockRadius.bind(this);
         this.getBlockBoxShadow = this.getBlockBoxShadow.bind(this);
@@ -71,7 +69,7 @@ export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockSta
                     className={rtcBlock["rtc-extending-wrapper"]}
                     style={style}>
                     <FloatBoxExtend
-                        joinRoomTime={this.state.joinRoomTime}
+                        joinRoomTime={context.joinRoomTime}
                         blockState={this.props.state}
                         remoteMediaStreams={context.remoteMediaStreams}
                         remoteMediaStreamsStates={context.remoteMediaStreamsStates}

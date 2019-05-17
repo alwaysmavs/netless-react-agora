@@ -11,6 +11,7 @@ export type RtcBlockContext = {
     setSliderExtending: () => void;
     setSliderHiding: () => void;
     stopRtc: () => void;
+    joinRoomTime: number;
 };
 
 const context = React.createContext<RtcBlockContext>(undefined as any);

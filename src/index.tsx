@@ -38,8 +38,8 @@ export type RtcLayoutProps = {
     agoraAppId: string;
     startBtn?: React.ReactNode;
     defaultStart?: boolean;
-    FloatingPosition?: BlockPosition;
     HidingPosition?: BlockPosition;
+    FloatingPosition?: BlockPosition;
     ExtendingPosition?: BlockPosition;
 };
 

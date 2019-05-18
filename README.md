@@ -16,7 +16,7 @@ npm install --save @netless/react-agora
 
 或者
 
-yarn @netless/react-agora
+yarn add @netless/react-agora
 ```
 
 ## 3. 接口说明

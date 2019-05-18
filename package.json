@@ -1,6 +1,7 @@
 {
   "name": "@netless/react-agora",
-  "version": "0.0.8",
+  "version": "0.0.9",
+  "types": "dist/index.d.ts",
   "description": "a media box with agora",
   "author": "alwaysmavs",
   "license": "MIT",

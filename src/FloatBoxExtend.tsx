@@ -6,8 +6,8 @@ import dropIcon from "./images/drop_icon.svg";
 import {HtmlElementRefContainer} from "./HtmlElementRefContainer";
 import RtcStopWatch from "./RtcStopWatch";
 import RtcMediaBoxCell from "./RtcMediaBoxCell";
-import {RoomMember} from "./index";
-import {Stream, Client} from "agora-rtc-sdk";
+import {RoomMember, StreamsStatesType} from "./index";
+import {Stream} from "agora-rtc-sdk";
 import floatBoxExtend from "./FloatBoxExtend.less";
 import {SlidingBlockState} from "./slidingBlock";
 
@@ -16,11 +16,11 @@ export type FloatBoxExtendProps = {
     readonly userId: number;
     readonly roomMembers: ReadonlyArray<RoomMember>;
     readonly localStream: Stream;
+    readonly remoteMediaStreamsStates: StreamsStatesType[];
     setSliderFloating: () => void;
     stopRtc: () => void;
     ignoreEventRefs: HtmlElementRefContainer;
     height: number;
-    agoraClient: Client;
     blockState:  SlidingBlockState;
     joinRoomTime: number;
 };
@@ -82,23 +82,25 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
             setSliderFloating,
             ignoreEventRefs,
             height,
+            remoteMediaStreamsStates,
             stopRtc} = this.props;
-        const remoteUserArray = roomMembers.filter(data => (data.information && data.information.id) !== userId);
-        const localUser = roomMembers.find(data => (data.information && data.information.id) === userId);
+        const remoteUserArray = roomMembers.filter(data => (data.information && parseInt(`${data.information.id}`)) !== userId);
+        const localUser = roomMembers.find(data => (data.information && parseInt(`${data.information.id}`)) === userId);
         const remoteStreamsComponentCells: React.ReactNode[] = [];
         for (const remoteUser of remoteUserArray) {
             if (remoteUser.information) {
-                const remoteUserId = remoteUser.information.id;
+                const remoteUserId = parseInt(`${remoteUser.information.id}`);
                 const remoteRtcStream = this.state.remoteMediaStreams.find(
                     remoteMediaStream => remoteMediaStream.getId() === remoteUserId,
                 );
+                const streamsState = remoteMediaStreamsStates.find(data => data.uid === remoteUserId);
                 remoteStreamsComponentCells.push((
                     <RtcMediaBoxCell
                         blockState={this.props.blockState}
-                        agoraClient={this.props.agoraClient}
                         roomMember={remoteUser}
                         remoteIndex={remoteUserArray.length}
                         key={`${remoteUserId}`}
+                        streamsState={streamsState}
                         streamBoxId={`${remoteUserId}`}
                         remoteStream={remoteRtcStream}
                     />

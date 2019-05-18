@@ -11,7 +11,6 @@ import rtcBlock from "./RtcBlock.less";
 export type RtcBlockState = {
     isFloatingDragged: boolean;
     animationReverse: boolean;
-    joinRoomTime: number;
 };
 
 export type RtcBlockProps = SlidingBlockProps & {
@@ -20,19 +19,14 @@ export type RtcBlockProps = SlidingBlockProps & {
 
 
 export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockState> {
-    private rtcClock: any;
     public constructor(props: RtcBlockProps) {
         super(props);
         this.state = {
             isFloatingDragged: false,
             animationReverse: false,
-            joinRoomTime: 0,
         };
         this.getBlockRadius = this.getBlockRadius.bind(this);
         this.getBlockBoxShadow = this.getBlockBoxShadow.bind(this);
-    }
-    public componentDidMount(): void {
-        this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
     }
     private getBlockRadius(blockState: SlidingBlockState): number {
         switch (blockState) {
@@ -56,12 +50,6 @@ export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockSta
         }
     }
 
-    public componentWillUnmount(): void {
-        if (this.rtcClock) {
-            clearInterval(this.rtcClock);
-        }
-    }
-
     public render(): React.ReactNode {
         let style: React.CSSProperties | undefined = undefined;
         if (this.props.state !== SlidingBlockState.Extending) {
@@ -81,16 +69,16 @@ export default class RtcBlock extends React.Component<RtcBlockProps, RtcBlockSta
                     className={rtcBlock["rtc-extending-wrapper"]}
                     style={style}>
                     <FloatBoxExtend
-                        joinRoomTime={this.state.joinRoomTime}
+                        joinRoomTime={context.joinRoomTime}
                         blockState={this.props.state}
                         remoteMediaStreams={context.remoteMediaStreams}
+                        remoteMediaStreamsStates={context.remoteMediaStreamsStates}
                         userId={context.userId}
                         roomMembers={context.roomMembers}
                         localStream={context.localStream}
                         setSliderFloating={context.setSliderFloating}
                         stopRtc={context.stopRtc}
                         height={this.props.height}
-                        agoraClient={context.agoraClient}
                         ignoreEventRefs={this.props.ignoreEventRefs}/>
                 </div>
             </div>

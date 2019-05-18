@@ -15,9 +15,16 @@ export type MemberInformation = {
     readonly isOwner: boolean;
     readonly avatar?: string;
 };
+export type Color = [number, number, number];
+export type MemberState = {
+    currentApplianceName: string;
+    strokeColor: Color;
+    strokeWidth: number;
+    textSize: number;
+};
 export type RoomMember = {
     readonly memberId: number;
-    readonly isRtcConnected: boolean;
+    readonly memberState: MemberState;
     readonly information?: MemberInformation;
 };
 export type StreamsStatesType = {state: {isVideoOpen: boolean, isAudioOpen: boolean}, uid: number};

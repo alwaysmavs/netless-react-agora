@@ -159,10 +159,8 @@ export default class RtcPage extends React.Component<{}, {}> {
     
 6. 项目截图
 
-    ![屏幕快照 2019-05-18 下午4.08.15](https://ohuuyffq2.qnssl.com/屏幕快照 2019-05-18 下午4.08.15.png)
-    
-    ![屏幕快照 2019-05-18 下午4.09.08](https://ohuuyffq2.qnssl.com/屏幕快照 2019-05-18 下午4.09.08.png)
-
+   ![react-agora-1](https://ohuuyffq2.qnssl.com/react-agora-1.png)
+   ![react-agora-2](https://ohuuyffq2.qnssl.com/react-agora-2.png)
 
 ## License
 

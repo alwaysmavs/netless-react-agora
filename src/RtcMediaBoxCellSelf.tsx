@@ -2,7 +2,6 @@ import "./RtcMediaBoxCell.less";
 import * as React from "react";
 import TweenOne from "rc-tween-one";
 import Identicon from "react-identicons";
-import userHead from "./images/user_head.svg";
 import mute_gray from "./images/mute_gray.svg";
 import voice from "./images/voice.svg";
 import {RoomMember} from "./index";
@@ -40,13 +39,13 @@ export default class RtcMediaBoxCellSelf extends React.Component<rtcVideoCellPro
     private renderLocalVoiceIcon(): React.ReactNode {
         if (this.props.isAudioOpen) {
             return (
-                <div className={rtcMediaBoxCell["rtc-float-sound"]}>
+                <div className={rtcMediaBoxCell["rtc-float-sound-self"]}>
                     <img className="rtc-float-sound-img" src={voice}/>
                 </div>
             );
         } else {
             return (
-                <div className={rtcMediaBoxCell["rtc-float-sound"]}>
+                <div className={rtcMediaBoxCell["rtc-float-sound-self"]}>
                     <img className={rtcMediaBoxCell["rtc-float-sound-img"]} src={mute_gray}/>
                 </div>
             );
@@ -55,14 +54,13 @@ export default class RtcMediaBoxCellSelf extends React.Component<rtcVideoCellPro
     public render(): React.ReactNode {
         const { localStream, roomMember }  = this.props;
         return (
-            <div className={rtcMediaBoxCell["rtc-video-box-cell-out"]}>
+            <div className={rtcMediaBoxCell["rtc-video-box-cell-out-self"]}>
                 <div
                     style={{
                         zIndex: 2,
                         display: this.props.isVideoOpen ? "none" : "flex",
-                        borderTopLeftRadius: 4,
                     }}
-                    className={rtcMediaBoxCell["rtc-float-cell"]}>
+                    className={rtcMediaBoxCell["rtc-float-cell-self"]}>
                     <TweenOne
                         animation={{
                             blur: localStream ? "0px" : "4px",
@@ -71,12 +69,11 @@ export default class RtcMediaBoxCellSelf extends React.Component<rtcVideoCellPro
                         className={rtcMediaBoxCell["rtc-float-cell-mid"]}>
                         { (roomMember && roomMember.information && roomMember.information.avatar) ?
                             <Identicon
-                            size={128}
+                            size={256}
                             string={roomMember.information.avatar}/> :
-                            <img
-                                onDragStart={event => event.preventDefault()}
-                                className={rtcMediaBoxCell["rtc-float-cell-inner-box"]}
-                                src={userHead}/>
+                            <Identicon
+                                size={256}
+                                string={"netless"}/>
                         }
                     </TweenOne>
                 </div>
@@ -84,10 +81,9 @@ export default class RtcMediaBoxCellSelf extends React.Component<rtcVideoCellPro
                     animation={{scale: 1, duration: 200}}
                     style={{
                         transform: "scale(0)",
-                        borderTopLeftRadius: 4,
                         display: !this.props.isVideoOpen ? "none" : "flex",
                     }}
-                    className={rtcMediaBoxCell["rtc-video-box-cell"]}
+                    className={rtcMediaBoxCell["rtc-video-box-cell-self"]}
                     id={this.props.streamBoxId}
                 />
                 {this.renderLocalVoiceIcon()}

@@ -281,8 +281,8 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
 
     private extendingSize = (roomMembers: number): {width: number, height: number} => {
         const elementsInLine = 2;
-        const linesCount = Math.ceil(roomMembers / elementsInLine);
-        const blockHeight: number = 128 * linesCount + 64;
+        const linesCount = Math.ceil((roomMembers - 1) / elementsInLine);
+        const blockHeight: number = 180 + 128 * linesCount + 64;
         const blockHeightMax: number = window.innerHeight - 32;
         const isBlockHeightMax: boolean = blockHeight >= blockHeightMax;
         if (isBlockHeightMax) {

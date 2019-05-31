@@ -1,6 +1,6 @@
 {
   "name": "@netless/react-agora",
-  "version": "0.0.9",
+  "version": "0.1.5",
   "types": "dist/index.d.ts",
   "description": "a media box with agora",
   "author": "alwaysmavs",
@@ -31,7 +31,6 @@
     "react-identicons": "^1.1.7"
   },
   "peerDependencies": {
-    "prop-types": "^15.5.4",
     "react": "^15.0.0 || ^16.0.0",
     "react-dom": "^15.0.0 || ^16.0.0"
   },

@@ -6,7 +6,8 @@
     "@netless/i18n-react-router": "^1.0.0",
     "@netless/react-agora": "link:..",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "white-react-sdk": "^2.0.0-beta.12"
   },
   "scripts": {
     "start": "react-app-rewired start --scripts-version react-scripts-ts",

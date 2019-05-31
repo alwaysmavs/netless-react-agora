@@ -2,79 +2,59 @@ import * as React from "react";
 import ReactAgora from "@netless/react-agora";
 import "./RtcPage.less";
 import {RouteComponentProps} from "react-router";
+import {RoomMember} from "white-react-sdk";
 
-export type MemberInformation = {
-    readonly id: number;
-    readonly nickName: string;
-    readonly isOwner: boolean;
-    readonly avatar?: string;
-};
-export type RoomMember = {
-    readonly memberId: number;
-    readonly isRtcConnected: boolean;
-    readonly information: MemberInformation;
-};
+const user: ReadonlyArray<RoomMember>  = [{
+    memberId: 2,
+    memberState: {
+        currentApplianceName: "pencil",
+        strokeColor: [236, 52, 85],
+        strokeWidth: 4,
+        textSize: 16,
+    },
+    information: {
+        id: "76611",
+        isOwner: false,
+        nickName: "46f70cf7-b439-4bae-9a8b-f6eaf6a0a696",
+        avatar: "46f70cf7-b439-4bae-9a8b-f6eaf6a0a696",
+    },
+},
+    {
+    memberId: 3,
+    memberState: {
+        currentApplianceName: "pencil",
+        strokeColor: [0, 91, 246],
+        strokeWidth: 4,
+        textSize: 16,
+    },
+    information: {
+        id: "87792",
+        isOwner: false,
+        nickName: "d501a95b-cea1-4d75-bdc4-4732f6291c59",
+        avatar: "d501a95b-cea1-4d75-bdc4-4732f6291c59",
+    },
+}, {
+    memberId: 4,
+    memberState: {
+        currentApplianceName: "rectangle",
+        strokeColor: [245, 173, 70],
+        strokeWidth: 4,
+        textSize: 16,
+    },
+    information: {
+        id: "28466",
+        isOwner: false,
+        nickName: "c5a3ae31-4359-4f51-bd61-8dcd8ee87f0f",
+        avatar: "c5a3ae31-4359-4f51-bd61-8dcd8ee87f0f",
+    },
+},
+];
 
-const user: RoomMember[] = [
-    {
-        memberId: 1,
-        isRtcConnected: false,
-        information:
-            {
-                id: 1,
-                nickName: "第一",
-                isOwner: false,
-                avatar: "dasdst",
-            },
-    },
-    {
-        memberId: 2,
-        isRtcConnected: false,
-        information:
-            {
-                id: 2,
-                nickName: "第二",
-                isOwner: false,
-                avatar: "mnbhkj",
-            },
-    },
-    {
-        memberId: 3,
-        isRtcConnected: false,
-        information:
-            {
-                id: 3,
-                nickName: "第三",
-                isOwner: false,
-                avatar: "vihbihgjgukjhkh",
-            },
-    },
-    {
-        memberId: 4,
-        isRtcConnected: false,
-        information:
-            {
-                id: 4,
-                nickName: "第四",
-                isOwner: false,
-                avatar: "mnbdqwehkj",
-            },
-    },
-    {
-        memberId: 5,
-        isRtcConnected: false,
-        information:
-            {
-                id: 5,
-                nickName: "第五",
-                isOwner: false,
-                avatar: "mnbh341234kj",
-            },
-    }];
-export default class RtcPage extends React.Component<RouteComponentProps<{user: string}>, {}> {
-    public constructor(props: RouteComponentProps<{user: string}>) {
+export default class RtcPage extends React.Component<RouteComponentProps<{ user: string }>, {}> {
+    public constructor(props: RouteComponentProps<{ user: string }>) {
         super(props);
     }
+
     public render(): React.ReactNode {
         const userId = parseInt(this.props.match.params.user);
         return (

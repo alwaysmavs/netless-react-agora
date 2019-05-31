@@ -59,7 +59,6 @@ export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, 
                     style={{
                         zIndex: 2,
                         display: (streamsState && streamsState.state.isVideoOpen) ?  "none" : "flex",
-                        borderTopRightRadius: 4,
                     }}
                     className={rtcMediaBoxCell["rtc-float-cell"]}>
                     <TweenOne

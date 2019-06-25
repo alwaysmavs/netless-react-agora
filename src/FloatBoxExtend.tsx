@@ -6,7 +6,8 @@ import dropIcon from "./images/drop_icon.svg";
 import {HtmlElementRefContainer} from "./HtmlElementRefContainer";
 import RtcStopWatch from "./RtcStopWatch";
 import RtcMediaBoxCell from "./RtcMediaBoxCell";
-import {RoomMember, StreamsStatesType} from "./index";
+import {StreamsStatesType} from "./index";
+import {RoomMember} from "white-react-sdk";
 import {Stream} from "agora-rtc-sdk";
 import floatBoxExtend from "./FloatBoxExtend.less";
 import {SlidingBlockState} from "./slidingBlock";
@@ -84,12 +85,12 @@ export default class FloatBoxExtend extends React.Component<FloatBoxExtendProps,
             height,
             remoteMediaStreamsStates,
             stopRtc} = this.props;
-        const remoteUserArray = roomMembers.filter(data => (data.information && parseInt(`${data.information.id}`)) !== userId);
-        const localUser = roomMembers.find(data => (data.information && parseInt(`${data.information.id}`)) === userId);
+        const remoteUserArray = roomMembers.filter(data => (data.payload && parseInt(`${data.payload.id}`)) !== userId);
+        const localUser = roomMembers.find(data => (data.payload && parseInt(`${data.payload.id}`)) === userId);
         const remoteStreamsComponentCells: React.ReactNode[] = [];
         for (const remoteUser of remoteUserArray) {
-            if (remoteUser.information) {
-                const remoteUserId = parseInt(`${remoteUser.information.id}`);
+            if (remoteUser.payload) {
+                const remoteUserId = parseInt(`${remoteUser.payload.id}`);
                 const remoteRtcStream = this.state.remoteMediaStreams.find(
                     remoteMediaStream => remoteMediaStream.getId() === remoteUserId,
                 );

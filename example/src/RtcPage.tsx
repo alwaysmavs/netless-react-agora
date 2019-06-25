@@ -12,7 +12,8 @@ const user: ReadonlyArray<RoomMember>  = [{
         strokeWidth: 4,
         textSize: 16,
     },
-    information: {
+    session: "",
+    payload: {
         id: "76611",
         isOwner: false,
         nickName: "46f70cf7-b439-4bae-9a8b-f6eaf6a0a696",
@@ -21,19 +22,21 @@ const user: ReadonlyArray<RoomMember>  = [{
 },
     {
     memberId: 3,
+    session: "",
     memberState: {
         currentApplianceName: "pencil",
         strokeColor: [0, 91, 246],
         strokeWidth: 4,
         textSize: 16,
     },
-    information: {
+    payload: {
         id: "87792",
         isOwner: false,
         nickName: "d501a95b-cea1-4d75-bdc4-4732f6291c59",
         avatar: "d501a95b-cea1-4d75-bdc4-4732f6291c59",
     },
 }, {
+
     memberId: 4,
     memberState: {
         currentApplianceName: "rectangle",
@@ -41,7 +44,8 @@ const user: ReadonlyArray<RoomMember>  = [{
         strokeWidth: 4,
         textSize: 16,
     },
-    information: {
+    session: "",
+    payload: {
         id: "28466",
         isOwner: false,
         nickName: "c5a3ae31-4359-4f51-bd61-8dcd8ee87f0f",

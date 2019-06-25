@@ -8,25 +8,8 @@ import AgoraRTC, {Stream, Client} from "agora-rtc-sdk";
 import {RtcBlockContextProvider} from "./RtcBlockContext";
 import TweenOne from "rc-tween-one";
 import styles from "./index.less";
+import {RoomMember} from "white-react-sdk";
 
-export type MemberInformation = {
-    readonly id: number;
-    readonly nickName: string;
-    readonly isOwner: boolean;
-    readonly avatar?: string;
-};
-export type Color = [number, number, number];
-export type MemberState = {
-    currentApplianceName: string;
-    strokeColor: Color;
-    strokeWidth: number;
-    textSize: number;
-};
-export type RoomMember = {
-    readonly memberId: number;
-    readonly memberState: MemberState;
-    readonly information?: MemberInformation;
-};
 export type StreamsStatesType = {state: {isVideoOpen: boolean, isAudioOpen: boolean}, uid: number};
 export type RtcLayoutState = {
     isBlockHiding: boolean;

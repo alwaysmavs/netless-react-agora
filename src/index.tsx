@@ -26,6 +26,7 @@ export type RtcLayoutProps = {
     channelId: string;
     roomMembers: ReadonlyArray<RoomMember>;
     agoraAppId: string;
+    setMediaState?: (state: boolean) => void;
     startBtn?: React.ReactNode;
     defaultStart?: boolean;
     HidingPosition?: BlockPosition;
@@ -73,8 +74,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             console.log("getUserMedia successfully");
             this.setState({localStream: localStream});
             localStream.play("rtc_local_stream");
-             this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
-
+            this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
             this.setState({isStartBtnLoading: false});
             this.agoraClient.join(this.props.agoraAppId, channelId, uid, (uid: number) => {
                 console.log("User " + uid + " join channel successfully");
@@ -84,7 +84,9 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             }, err => {
                 console.log(err);
             });
-
+            if (this.props.setMediaState) {
+                this.props.setMediaState(true);
+            }
         }, (err: any) => {
             console.log("getUserMedia failed", err);
         });
@@ -195,6 +197,9 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             if (this.state.localStream) {
                 this.state.localStream.stop();
                 this.state.localStream.close();
+                if (this.props.setMediaState) {
+                    this.props.setMediaState(false);
+                }
                 this.setState({localStream: null,
                     remoteMediaStreams: [],
                     remoteMediaStreamsStates: [],

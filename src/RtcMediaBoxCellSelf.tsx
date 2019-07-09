@@ -4,7 +4,7 @@ import TweenOne from "rc-tween-one";
 import Identicon from "react-identicons";
 import mute_gray from "./images/mute_gray.svg";
 import voice from "./images/voice.svg";
-import {RoomMember} from "./index";
+import {RoomMember} from "white-react-sdk";
 import {Stream} from "agora-rtc-sdk";
 import rtcMediaBoxCell from "./RtcMediaBoxCell.less";
 import {SlidingBlockState} from "./slidingBlock";
@@ -67,10 +67,10 @@ export default class RtcMediaBoxCellSelf extends React.Component<rtcVideoCellPro
                             duration: localStream ? 200 : 0,
                         }}
                         className={rtcMediaBoxCell["rtc-float-cell-mid"]}>
-                        { (roomMember && roomMember.information && roomMember.information.avatar) ?
+                        { (roomMember && roomMember.payload && roomMember.payload.avatar) ?
                             <Identicon
                             size={256}
-                            string={roomMember.information.avatar}/> :
+                            string={roomMember.payload.avatar}/> :
                             <Identicon
                                 size={256}
                                 string={"netless"}/>

@@ -6,7 +6,8 @@ import userHead from "./images/user_head.svg";
 import mute_gray from "./images/mute_gray.svg";
 import voice from "./images/voice.svg";
 import RtcMediaBoxCellPlayerBox from "./RtcMediaBoxCellPlayerBox";
-import {RoomMember, StreamsStatesType} from "./index";
+import {StreamsStatesType} from "./index";
+import {RoomMember} from "white-react-sdk";
 import rtcMediaBoxCell from "./RtcMediaBoxCell.less";
 import {SlidingBlockState} from "./slidingBlock";
 import {Stream} from "agora-rtc-sdk";
@@ -67,10 +68,10 @@ export default class RtcMediaBoxCell extends React.Component<rtcVideoCellProps, 
                         }}
                         resetStyle={true}
                         className={rtcMediaBoxCell["rtc-float-cell-mid"]}>
-                        {(roomMember.information && roomMember.information.avatar) ?
+                        {(roomMember.payload && roomMember.payload.avatar) ?
                             <Identicon
                                 size={128}
-                                string={roomMember.information.avatar}/> :
+                                string={roomMember.payload.avatar}/> :
                             <img
                                 onDragStart={event => event.preventDefault()}
                                 className={rtcMediaBoxCell["rtc-float-cell-inner-box"]}

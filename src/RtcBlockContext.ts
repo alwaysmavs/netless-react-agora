@@ -1,5 +1,6 @@
 import * as React from "react";
-import {RoomMember, StreamsStatesType} from "./index";
+import {StreamsStatesType} from "./index";
+import {RoomMember} from "white-react-sdk";
 import {Stream} from "agora-rtc-sdk";
 export type RtcBlockContext = {
     readonly remoteMediaStreams: Stream[];

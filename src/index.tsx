@@ -1,32 +1,15 @@
 import * as React from "react";
 import {BlockPosition, SlidingBlockState} from "./slidingBlock";
 const timeout = (ms: any) => new Promise(res => setTimeout(res, ms));
-import video from "./images/video.svg";
+import video from "./images/video_white.svg";
 import {ExtendingPosition, FloatingPosition, HidingPosition} from "./RtcSlidingBlockPosition";
 import {SlidingBlockMask} from "./SlidingBlockMask";
 import AgoraRTC, {Stream, Client} from "agora-rtc-sdk";
 import {RtcBlockContextProvider} from "./RtcBlockContext";
 import TweenOne from "rc-tween-one";
 import styles from "./index.less";
+import {RoomMember} from "white-react-sdk";
 
-export type MemberInformation = {
-    readonly id: number;
-    readonly nickName: string;
-    readonly isOwner: boolean;
-    readonly avatar?: string;
-};
-export type Color = [number, number, number];
-export type MemberState = {
-    currentApplianceName: string;
-    strokeColor: Color;
-    strokeWidth: number;
-    textSize: number;
-};
-export type RoomMember = {
-    readonly memberId: number;
-    readonly memberState: MemberState;
-    readonly information?: MemberInformation;
-};
 export type StreamsStatesType = {state: {isVideoOpen: boolean, isAudioOpen: boolean}, uid: number};
 export type RtcLayoutState = {
     isBlockHiding: boolean;
@@ -43,6 +26,7 @@ export type RtcLayoutProps = {
     channelId: string;
     roomMembers: ReadonlyArray<RoomMember>;
     agoraAppId: string;
+    setMediaState?: (state: boolean) => void;
     startBtn?: React.ReactNode;
     defaultStart?: boolean;
     HidingPosition?: BlockPosition;
@@ -90,8 +74,7 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             console.log("getUserMedia successfully");
             this.setState({localStream: localStream});
             localStream.play("rtc_local_stream");
-             this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
-
+            this.rtcClock = setInterval( () => this.setState({joinRoomTime: this.state.joinRoomTime + 1}), 1000);
             this.setState({isStartBtnLoading: false});
             this.agoraClient.join(this.props.agoraAppId, channelId, uid, (uid: number) => {
                 console.log("User " + uid + " join channel successfully");
@@ -101,7 +84,9 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             }, err => {
                 console.log(err);
             });
-
+            if (this.props.setMediaState) {
+                this.props.setMediaState(true);
+            }
         }, (err: any) => {
             console.log("getUserMedia failed", err);
         });
@@ -212,6 +197,9 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
             if (this.state.localStream) {
                 this.state.localStream.stop();
                 this.state.localStream.close();
+                if (this.props.setMediaState) {
+                    this.props.setMediaState(false);
+                }
                 this.setState({localStream: null,
                     remoteMediaStreams: [],
                     remoteMediaStreamsStates: [],
@@ -268,7 +256,8 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
                         }}
                         style={{
                             transform: "scale(0)",
-                        }} onClick={() => this.startRtc(this.props.userId, this.props.channelId)} className={styles["rtc-block-btn"]}>
+                        }} onClick={() => this.startRtc(this.props.userId, this.props.channelId)}
+                        className={styles["rtc-block-btn"]}>
                         {this.state.isStartBtnLoading ? <img src={video}/> : <img src={video}/>}
                     </TweenOne>
                 );

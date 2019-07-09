@@ -652,9 +652,9 @@
     "@babel/plugin-transform-react-jsx-source" "^7.0.0"
 
 "@babel/runtime@^7.2.0":
-  version "7.4.5"
-  resolved "https://registry.npm.taobao.org/@babel/runtime/download/@babel/runtime-7.4.5.tgz#582bb531f5f9dc67d2fcb682979894f75e253f12"
-  integrity sha1-WCu1MfX53GfS/LaCl5iU914lPxI=
+  version "7.5.2"
+  resolved "https://registry.npm.taobao.org/@babel/runtime/download/@babel/runtime-7.5.2.tgz#98f584f4d03be5d8142c77107ffaedee4d5956f1"
+  integrity sha1-mPWE9NA75dgULHcQf/rt7k1ZVvE=
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -6519,9 +6519,9 @@ mobx-react@^5.4.3:
     react-lifecycles-compat "^3.0.2"
 
 mobx@^4.9.3:
-  version "4.11.0"
-  resolved "https://registry.npm.taobao.org/mobx/download/mobx-4.11.0.tgz#c3bfcab96623d1f2f2eb4d1f01199c225f62361e"
-  integrity sha1-w7/KuWYj0fLy600fARmcIl9iNh4=
+  version "4.12.0"
+  resolved "https://registry.npm.taobao.org/mobx/download/mobx-4.12.0.tgz#9032d7cf077497b4356fa4ef6f2ee81e568114fe"
+  integrity sha1-kDLXzwd0l7Q1b6Tvby7oHlaBFP4=
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -10216,19 +10216,19 @@ which@^1.2.12, which@^1.2.14, which@^1.2.9, which@^1.3.0:
   dependencies:
     isexe "^2.0.0"
 
-white-react-sdk@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.npm.taobao.org/white-react-sdk/download/white-react-sdk-2.0.4.tgz#881f214442494070e41b9238e88307964e422249"
-  integrity sha1-iB8hREJJQHDkG5I46IMHlk5CIkk=
+white-react-sdk@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.npm.taobao.org/white-react-sdk/download/white-react-sdk-2.2.4.tgz#86a9515523451daad257c2a599eff6ae5504597a"
+  integrity sha1-hqlRVSNFHarSV8Klme/2rlUEWXo=
   dependencies:
     react "^16.8.4"
     react-dom "^16.8.4"
-    white-web-sdk "2.0.4"
+    white-web-sdk "2.2.4"
 
-white-web-sdk@2.0.4:
-  version "2.0.4"
-  resolved "https://registry.npm.taobao.org/white-web-sdk/download/white-web-sdk-2.0.4.tgz#a19bf856f8e4f0a6ec8d55844fba1c04e3b64572"
-  integrity sha1-oZv4Vvjk8KbsjVWET7ocBOO2RXI=
+white-web-sdk@2.2.4:
+  version "2.2.4"
+  resolved "https://registry.npm.taobao.org/white-web-sdk/download/white-web-sdk-2.2.4.tgz#60fd2e275e8f01a2b49ade76c5a996f69b18f6ad"
+  integrity sha1-YP0uJ16PAaK0mt52xamW9psY9q0=
   dependencies:
     bezier-js "^2.4.0"
     color "^3.1.2"

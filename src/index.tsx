@@ -1,7 +1,7 @@
 import * as React from "react";
 import {BlockPosition, SlidingBlockState} from "./slidingBlock";
 const timeout = (ms: any) => new Promise(res => setTimeout(res, ms));
-import video from "./images/video.svg";
+import video from "./images/video_white.svg";
 import {ExtendingPosition, FloatingPosition, HidingPosition} from "./RtcSlidingBlockPosition";
 import {SlidingBlockMask} from "./SlidingBlockMask";
 import AgoraRTC, {Stream, Client} from "agora-rtc-sdk";
@@ -256,7 +256,8 @@ export default class Index extends React.Component<RtcLayoutProps, RtcLayoutStat
                         }}
                         style={{
                             transform: "scale(0)",
-                        }} onClick={() => this.startRtc(this.props.userId, this.props.channelId)} className={styles["rtc-block-btn"]}>
+                        }} onClick={() => this.startRtc(this.props.userId, this.props.channelId)}
+                        className={styles["rtc-block-btn"]}>
                         {this.state.isStartBtnLoading ? <img src={video}/> : <img src={video}/>}
                     </TweenOne>
                 );
